@@ -33,7 +33,7 @@ alias ag='	alias | grep -i'
 alias eg='	printenv | grep -i'
 alias hg='	history | grep -i'
 alias ht='	history | tail'
-alias fegi='	find . -print | egrep -i'
+alias fpg='	find . -print | egrep -i'
 alias egi='	egrep -i'
 alias oi='      offlineimap'
 alias psg='	/bin/ps -auxww | grep'
@@ -173,7 +173,6 @@ if [ -e ~/bin/sshagent ]; then
   source ~/bin/sshagent
 fi
 
-
 #
 # Because MacOS has to be different...
 #
@@ -184,16 +183,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     alias 3clip='printf %s "$(cat /dev/stdin)" | xclip -selection c'  # no final \n
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         alias 2clip='pbcopy'
-# elif [[ "$OSTYPE" == "cygwin" ]]; then
-#         # POSIX compatibility layer and Linux environment emulation for Windows
-# elif [[ "$OSTYPE" == "msys" ]]; then
-#         # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-# elif [[ "$OSTYPE" == "win32" ]]; then
-#         # I'm not sure this can happen.
-# elif [[ "$OSTYPE" == "freebsd"* ]]; then
-#         # ...
-# else
-        # Unknown.
 fi
 # because hosnames assigned by IT deperments like abc123456789ef are not meaningful
 
