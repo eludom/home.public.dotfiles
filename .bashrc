@@ -1,18 +1,19 @@
 #
 # GMJ .bashrc
 #
-# 2020-11-15
+# Tue Mar 26 20:07:29 2013
+#
 #
 # Don't do this unless you are testing.
 #
 #    set -e
+#
+#
 
 # Helper functions
-
 #PROG=`basename "$0" | tr -d '\n'`
-PROG="bashrc" # $0 not piking it up right for .bashrc
+PROG="bashrc"
 
-PROG='.bashrc'
 function info()  { echo ${PROG}\: info: "$@" 1>&2; }
 function warn()  { echo ${PROG}\: warning: "$@" 1>&2; }
 function error() { echo ${PROG}\: error: "$@" 1>&2; }
@@ -38,14 +39,7 @@ alias oi='      offlineimap'
 alias psg='	/bin/ps -auxww | grep'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
-
-if [ -f /usr/bin/locate ]; then
-    alias locate='locate -r'
-elif [ -f /usr/bin/mlocate ]; then
-    alias locate='mlocate -r'
-else
-    warn no locate command.  Install\?
-fi
+alias locate='locate -r'
 
 #
 # cd functions that list the directory stack
@@ -179,24 +173,6 @@ if [ -e ~/bin/sshagent ]; then
   source ~/bin/sshagent
 fi
 
-# git stuff
-
-alias glm='git ls-files -m'
-alias gam='git add `git ls-files -m`'
-alias gcm='git commit -m'
-alias gs='git status'
-
-# Add git stuff to prompt
-
-# http://thelucid.com/2008/12/02/git-setting-up-a-remote-repository-and-doing-an-initial-push/
-function git-branch-name {
-  git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3
-}
-function git-branch-prompt {
-  local branch=`git-branch-name`
-  if [ $branch ]; then printf " [%s]" $branch; fi
-}
-
 
 #
 # Because MacOS has to be different...
@@ -220,12 +196,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Unknown.
 fi
 # because hosnames assigned by IT deperments like abc123456789ef are not meaningful
-function prompt-hostname {
-  if [ -f ~/etc/hostname ]; then head -1 ~/etc/hostname; elif [ -f /etc/hostname ]; then head -1 /etc/hostname; else echo STUPIDMAC; fi
-}
-
-export PS1="\# [\t] \u@\h \W/\$(git-branch-prompt) $ "
-PS1="\u@\$(prompt-hostname) \[\033[0;36m\]\W\[\033[0m\]\[\033[0;32m\]\$(git-branch-prompt)\[\033[0m\] \$ "
 
 # Preserve history across sesssions
 #
@@ -236,12 +206,9 @@ export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 shopt -s histappend                      # append to history, don't overwrite it
 
-export IGNOREEOF=5			 # Don't log by accedent with ^D
-
 # Save and reload the history after each command finishes
 #export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 export PROMPT_COMMAND="history -a; history -c; history -r;"
-
 
 # Useful functions
 
@@ -287,11 +254,13 @@ pathlast $HOME/bin
 pathlast /opt/bin
 pathlast /usr/local/bin
 pathlast /opt/bin
-pathlast $HOME/.local/bin
 
 #
 # Execute any .sh files in ~/rc.local/*.sh
 #
+# This allows me to split out setup for aliases
+# and commands that only get used on certian systems
+# or in certian contexts (git, go, mail, blog..)
 
 if [ -d ${HOME}/rc.local ]; then
     for rcfile in $(find ${HOME}/rc.local -name \*.sh); do
