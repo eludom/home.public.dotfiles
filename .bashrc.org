@@ -1,5 +1,5 @@
 #+title: .bashrc
-#+date: <2020-11-29 12:47:37 Sunday>
+#+date: <2020-11-30 06:03:40 Monday>
 #+author: George M Jones
 #+email: gmj@pobox.com
 #+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:nil arch:headline
@@ -280,7 +280,7 @@ export PS1="\# [\t] \u@\h \W/ $ "
   These path* functions add and remove elements to PATH.
   They insure that entries are unique.
   They allow you to place a path first or last in the order (e.g.
-  so that ~/bin comes before /usr/local/bin)
+  so that =~/bin= comes before =/usr/local/bin=)
 
   #+begin_src shell :tangle .bashrc :noweb no-export
   pathrm() {
@@ -435,13 +435,17 @@ export PS1="\# [\t] \u@\h \W/ $ "
    #+end_src
 
 ** viewing files
-   Notes on setting up file/mime type assiciatons
+   Notes on setting up file/mime type associations can be found at
+
    https://unix.stackexchange.com/questions/77136/xdg-open-default-applications-behavior
 
-   So...
+   So, to make emacs (what else?) the default for MIME type
+   =text/plain= ...
 
+   #+begin_example
    locate -r 'emacs.*\.desktop'
    xdg-mime default emacs.desktop text/plain
+   #+end_example
 
    #+begin_src shell :tangle .bashrc :noweb no-export
    if [[  ! -z "`which xdg-open`" ]]; then alias open='xdg-open '; fi
