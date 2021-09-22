@@ -20,6 +20,8 @@ alias psg='	/bin/ps -auxww | grep'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
 alias locate='locate -r'
+alias count='sort | uniq -c | sort -rn'
+alias listening='sudo lsof -i | grep LISTEN'
 
 alias count='sort | uniq -c | sort -nr'
 alias listening='sudo lsof -i | grep LISTEN'
