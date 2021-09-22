@@ -293,5 +293,7 @@ ls -Atl  ; }
 
 if [[  ! -z "`which xdg-open`" ]]; then alias open='xdg-open '; fi
 
+export IGNOREEOF=42
+
 touch $HOME/.bashrc-ran
 debug ".bashrc done"

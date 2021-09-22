@@ -19,3 +19,5 @@
     ll = log --graph --oneline --decorate --branches --tags
     lll = log --graph --oneline --decorate --all
     lg = log --graph --simplify-by-decoration --pretty=format:'%d' --all
+[pull]
+	rebase = false
