@@ -20,8 +20,10 @@ alias psg='	/bin/ps -auxww | grep'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
 alias locate='locate -r'
-alias count='sort | uniq -c | sort -rn'
+
+alias count='sort | uniq -c | sort -nr'
 alias listening='sudo lsof -i | grep LISTEN'
+alias ips='ifconfig | grep inet'
 
 function dirl() {
     # "DIR"ectory "L"ist directory stack, one per line
