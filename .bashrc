@@ -7,6 +7,7 @@ function error() { echo ${PROG}\: error: "$@" 1>&2; }
 function debug() { [[ -v DEBUG ]] && echo ${PROG}\: debug: "$@" 1>&2 || true ; }
 function die()   { echo ${PROG}\: fatal: "$@" 1>&2 && exit 1; }
 
+function xtitle {    PROMPT_COMMAND="echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""; }
 export PS1="\# [\t] \u@\h \W/ $ "
 
 alias rm='	rm -i'
@@ -111,8 +112,20 @@ export HISTFILESIZE=100000               # big big history
 shopt -s histappend                      # append to history, don't overwrite it
 
 # Save and reload the history after each command finishes
-export PROMPT_COMMAND="history -a; history -c; history -r;"
 
+if [[ -z "${DISPLAY}" ]]; then
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""
+else
+    # in X-land, set window title to user@host:pwd
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;\`whoami\`@\`hostname -s\`:\`pwd\`\007\""
+fi
+
+
+# modern GPG setup
+# https://stackoverflow.com/questions/17769831/how-to-make-gpg-prompt-for-passphrase-on-cli
+#
+GPG_TTY=$(tty)
+export GPG_TTY
 
 function hgt() {
     # hgt == "history grep (for arg) tail"
