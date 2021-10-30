@@ -202,6 +202,7 @@ alias pathcat="echo $PATH | sed 's/:/\n/g'"
 # Be sure we have a few specific paths if they exist
 
 pathlast $HOME/bin
+pathfirst $HOME/.local/bin
 pathlast /usr/local/bin
 pathlast /opt/bin
 
