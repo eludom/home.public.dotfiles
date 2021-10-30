@@ -7,6 +7,7 @@ function error() { echo ${PROG}\: error: "$@" 1>&2; }
 function debug() { [[ -v DEBUG ]] && echo ${PROG}\: debug: "$@" 1>&2 || true ; }
 function die()   { echo ${PROG}\: fatal: "$@" 1>&2 && exit 1; }
 
+function xtitle {    PROMPT_COMMAND="echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""; }
 export PS1="\# [\t] \u@\h \W/ $ "
 
 alias rm='	rm -i'
@@ -20,6 +21,7 @@ alias psg='	/bin/ps -auxww | grep'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
 alias locate='locate -r'
+alias dca="diff --color=always"
 
 alias count='sort | uniq -c | sort -nr'
 alias listening='sudo lsof -i | grep LISTEN'
@@ -56,49 +58,49 @@ function dirp () {
 alias cd=pushd
 
 function gf() {
-# grep-find: grep for patterins in files via find
-#
-# Usage: gf patterns [files [days]]
-#
-# Examples:
-#   gf findMeAnywhere
-#   gf findMeInTextFiles '*.txt'
-#   gf findMeInTextFiles .txt
-#   gf BEGIN\|END .org 30
+    # grep-find: grep for patterins in files via find
+    #
+    # Usage: gf patterns [files [days]]
+    #
+    # Examples:
+    #   gf findMeAnywhere
+    #   gf findMeInTextFiles '*.txt'
+    #   gf findMeInTextFiles .txt
+    #   gf BEGIN\|END .org 30
 
-local files=""
-local days="365"
+    local files=""
+    local days="365"
 
-set -o noglob
+    set -o noglob
 
-# First arg is pattern(s) for egrep
-if [ -z ${1+x} ]; then
-  echo 'gf needs string(s) to search for ' 1>&2
-  info "Usage: gf patterns [files [days]]"
-  return 1
-fi
+    # First arg is pattern(s) for egrep
+    if [ -z ${1+x} ]; then
+        echo 'gf needs string(s) to search for ' 1>&2
+        info "Usage: gf patterns [files [days]]"
+        return 1
+    fi
 
-# Second arg (if present) is files for find.  No globbing, so "*.txt" OK
-if [ ! -z ${2+x} ]; then
-  if [[ "$2" =~ ^\. ]]; then
-    # Special case: treat ".foo" as "*.foo"
-    # Avoids needing to quote on command line
-    files="-name *$2"
-  else
-    files="-name ${2}"
-  fi
-fi
+    # Second arg (if present) is files for find.  No globbing, so "*.txt" OK
+    if [ ! -z ${2+x} ]; then
+        if [[ "$2" =~ ^\. ]]; then
+            # Special case: treat ".foo" as "*.foo"
+            # Avoids needing to quote on command line
+            files="-name *$2"
+        else
+            files="-name ${2}"
+        fi
+    fi
 
-# $3 (if present) is find -mtime arg, default 365
-if [ ! -z ${3+x} ]; then
-  days="${3}"
-fi
+    # $3 (if present) is find -mtime arg, default 365
+    if [ ! -z ${3+x} ]; then
+        days="${3}"
+    fi
 
-# set -x
-find . -type f -mtime -${days} $files -exec egrep --color -H -i "${1}" \{\} \;
-# set +x
+    # set -x
+    find . -type f -mtime -${days} $files -exec egrep --color=always h -H -i "${1}" \{\} \;
+    # set +x
 
-set +o noglob
+    set +o noglob
 }
 
 # Preserve history across sesssions
@@ -111,8 +113,20 @@ export HISTFILESIZE=100000               # big big history
 shopt -s histappend                      # append to history, don't overwrite it
 
 # Save and reload the history after each command finishes
-export PROMPT_COMMAND="history -a; history -c; history -r;"
 
+if [[ -z "${DISPLAY}" ]]; then
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""
+else
+    # in X-land, set window title to user@host:pwd
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;\`whoami\`@\`hostname -s\`:\`pwd\`\007\""
+fi
+
+
+# modern GPG setup
+# https://stackoverflow.com/questions/17769831/how-to-make-gpg-prompt-for-passphrase-on-cli
+#
+GPG_TTY=$(tty)
+export GPG_TTY
 
 function hgt() {
     # hgt == "history grep (for arg) tail"
