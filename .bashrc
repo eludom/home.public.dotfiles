@@ -10,23 +10,34 @@ function die()   { echo ${PROG}\: fatal: "$@" 1>&2 && exit 1; }
 function xtitle {    PROMPT_COMMAND="echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""; }
 export PS1="\# [\t] \u@\h \W/ $ "
 
-alias rm='	rm -i'
+#
+# Aliases from ages past
+#
+
+# shell related
 alias ag='	alias | grep -i'
 alias eg='	printenv | grep -i'
 alias hg='	history | grep -i'
 alias ht='	history | tail'
-alias fpg='	find . -print | egrep -i'
 alias egi='	egrep -i'
-alias psg='	/bin/ps -auxww | grep'
-alias p8='	ping -c 3 8.8.8.8' # make sure routing works
-alias pp='	ping -c 3 port111.com' # make sure dns and routing work
+# File related
+alias rm='	rm -i'
 alias locate='locate -r'
-alias dca="diff --color=always"
-
-alias count='sort | uniq -c | sort -nr'
+alias fpg='	find . -print | egrep -i'
+# Process related
+alias psg='	/bin/ps -auxww | grep'
+# Network related
 alias listening='sudo lsof -i | grep LISTEN'
 alias ips='ifconfig | grep inet'
+alias p8='	ping -c 3 8.8.8.8' # make sure routing works
+alias pp='	ping -c 3 port111.com' # make sure dns and routing work
+# utilities/statistics
+alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 
+
+#
+# Directory stack functions
+#
 function dirl() {
     # "DIR"ectory "L"ist directory stack, one per line
     # Usage: dirl
@@ -54,9 +65,12 @@ function dirp () {
     done
     dirl
 }
-
 alias cd=pushd
 
+
+#
+# Grep/Find functons
+#
 function gf() {
     # grep-find: grep for patterins in files via find
     #
@@ -121,7 +135,6 @@ else
     export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;\`whoami\`@\`hostname -s\`:\`pwd\`\007\""
 fi
 
-
 # modern GPG setup
 # https://stackoverflow.com/questions/17769831/how-to-make-gpg-prompt-for-passphrase-on-cli
 #
@@ -141,6 +154,9 @@ function hgt() {
     return 0
 }
 
+#
+# set hostname
+#
 if [ -e ${HOME}/etc/hostname ]; then
     export HOSTNAME=`cat ${HOME}/etc/hostname`
 elif [ -e /etc/hostname ]; then
@@ -168,10 +184,16 @@ fi
 LOCAL=`locale -a | grep -i en_us | head -1`
 if [[ "$LOCAL" != "" ]]; then export LC_NUMERIC="$LOCAL"; fi
 
+#
+# Start SSH agent
+#
 if [ -e ~/bin/sshagent ]; then
     source ~/bin/sshagent
 fi
 
+#
+# Copy to clipbloard/paste buffer without using the mouse
+#
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   alias 2clip='xclip -selection c'
   alias 3clip='printf %s "$(cat /dev/stdin)" | xclip -selection c'  # no final \n
@@ -179,6 +201,10 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   alias 2clip='pbcopy'
 fi
 
+
+#
+# Path aliases
+#
 pathrm() {
     # remove an item from the path
     if [ -d "$1" ]; then
@@ -220,6 +246,12 @@ pathfirst $HOME/.local/bin
 pathlast /usr/local/bin
 pathlast /opt/bin
 
+#
+# Source scripts in ~/rc.local/*.sh
+#
+# These are for setup in different environments
+# .e.g. I only set up email on my laptop.
+#
 if [ -d ${HOME}/rc.local ]; then
     for rcfile in $(find ${HOME}/rc.local -name \*.sh); do
         debug running localrc ${rcfile}
@@ -227,6 +259,13 @@ if [ -d ${HOME}/rc.local ]; then
     done
 fi
 
+
+#
+# Emacs setup
+#
+# TODO: move to ~/rc.local
+#   + I (sadly) don't urn emacs everwhere
+#
 alias emacs='setsid emacs'
 
 # from http://stuff-things.net/2014/12/16/working-with-emacsclient/
@@ -241,8 +280,11 @@ else
 fi
 export VISUAL=$EDITOR
 
-# coloring for ls functions
+#
+# Various ls functions
+#
 
+# coloring for ls functions
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     color="--color";
 else
@@ -310,7 +352,13 @@ ls -Atl  ; }
 
 if [[  ! -z "`which xdg-open`" ]]; then alias open='xdg-open '; fi
 
+#
+# Don't exit the shell casually
+#
 export IGNOREEOF=42
 
+#
+# "...footprints on the sands of time..." (I exist[ed]...)
+#
 touch $HOME/.bashrc-ran
 debug ".bashrc done"
