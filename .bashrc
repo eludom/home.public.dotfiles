@@ -1,3 +1,13 @@
+#  This is George Jone's .bashrc file
+#
+
+# These should be set but sometimes cause problems (shell exiting)
+#   set -e
+#   set -u
+
+# Set to debug
+#   export DEBUG=1
+
 #PROG=`basename "$0" | tr -d '\n'`  # normal setting
 PROG="bashrc" # setting for bashrc due to errors
 
@@ -7,7 +17,16 @@ function error() { echo ${PROG}\: error: "$@" 1>&2; }
 function debug() { [[ -v DEBUG ]] && echo ${PROG}\: debug: "$@" 1>&2 || true ; }
 function die()   { echo ${PROG}\: fatal: "$@" 1>&2 && exit 1; }
 
-function xtitle {    PROMPT_COMMAND="echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""; }
+
+function set_xtitle {
+    # set X window title
+    #
+    # Usage:
+    #
+    #   set_xtitle [name]
+    WINDOW_NAME="${1:-`basename $PWD`}"
+    PROMPT_COMMAND="echo -ne \"\033]0;${WINDOW_NAME} $USER@$HOSTNAME:$PWD\007\"";
+}
 export PS1="\# [\t] \u@\h \W/ $ "
 
 #
@@ -351,6 +370,15 @@ function nf ()
 }
 
 
+if [[  ! -z "`which xdg-open`" ]]; then
+    alias open='xdg-open ';
+    export OPEN='xdg-open ';
+else
+    export OPEN='echo OPEN not defined';
+fi
+
+
+
 # new file tail file
 function nftf { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs tail -f  ; }
 
@@ -366,14 +394,15 @@ function nfl { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs less  ; }
 # new file cat
 function nfc { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs cat  ; }
 
+# new file cat
+function nfo { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs $OPEN  ; }
+
 # new file ls
 function nfls { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs ls -A1t  ; }
 
 # new file ls -l
 function nflsl { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs
 ls -Atl  ; }
-
-if [[  ! -z "`which xdg-open`" ]]; then alias open='xdg-open '; fi
 
 #
 # Don't exit the shell casually
