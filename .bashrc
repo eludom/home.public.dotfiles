@@ -110,54 +110,6 @@ function dirp () {
 alias cd=pushd
 
 
-#
-# Grep/Find functons
-#
-function gf() {
-    # grep-find: grep for patterins in files via find
-    #
-    # Usage: gf patterns [files [days]]
-    #
-    # Examples:
-    #   gf findMeAnywhere
-    #   gf findMeInTextFiles '*.txt'
-    #   gf findMeInTextFiles .txt
-    #   gf BEGIN\|END .org 30
-
-    local files=""
-    local days="365"
-
-    set -o noglob
-
-    # First arg is pattern(s) for egrep
-    if [ -z ${1+x} ]; then
-        echo 'gf needs string(s) to search for ' 1>&2
-        info "Usage: gf patterns [files [days]]"
-        return 1
-    fi
-
-    # Second arg (if present) is files for find.  No globbing, so "*.txt" OK
-    if [ ! -z ${2+x} ]; then
-        if [[ "$2" =~ ^\. ]]; then
-            # Special case: treat ".foo" as "*.foo"
-            # Avoids needing to quote on command line
-            files="-name *$2"
-        else
-            files="-name ${2}"
-        fi
-    fi
-
-    # $3 (if present) is find -mtime arg, default 365
-    if [ ! -z ${3+x} ]; then
-        days="${3}"
-    fi
-
-    # set -x
-    find . -type f -mtime -${days} $files -exec egrep --color=always h -H -i "${1}" \{\} \;
-    # set +x
-
-    set +o noglob
-}
 
 # Preserve history across sesssions
 #
