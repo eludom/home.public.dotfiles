@@ -53,6 +53,10 @@ alias pp='	ping -c 3 port111.com' # make sure dns and routing work
 # utilities/statistics
 alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 
+# Newer aliases
+
+# json pretty prett print
+alias jpp="python -m json.tool"
 
 #
 # Shell-related functions
