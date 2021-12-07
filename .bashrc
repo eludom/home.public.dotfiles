@@ -5,6 +5,9 @@
 #   set -e
 #   set -u
 
+# Don't exit out of login shell on error
+set +e
+
 # Set to debug
 #   export DEBUG=1
 
