@@ -318,6 +318,7 @@ else
     export OPEN='echo OPEN not defined';
 fi
 
+export BROWSER=firefox
 
 
 # new file tail file
