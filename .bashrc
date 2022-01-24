@@ -61,6 +61,8 @@ alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 # json pretty prett print
 alias jpp="python -m json.tool"
 
+alias h=head
+
 #
 # Shell-related functions
 #
