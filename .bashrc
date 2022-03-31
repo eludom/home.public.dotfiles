@@ -235,13 +235,13 @@ pathlast /opt/bin
 # These are for setup in different environments
 # .e.g. I only set up email on my laptop.
 #
-if [ -d ${HOME}/rc.local ]; then
-    for rcfile in $(find ${HOME}/rc.local -name \*.sh); do
+
+for rcfile in ${HOME}/rc.local/*.sh; do
+    if [ -e "$rcfile" ]; then
         debug running localrc ${rcfile}
         source ${rcfile}
-    done
-fi
-
+    fi
+done
 
 #
 # Emacs setup
