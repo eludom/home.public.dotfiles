@@ -53,6 +53,8 @@ alias listening='sudo lsof -i | grep LISTEN'
 alias ips='ifconfig | grep inet'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
+# Disk related
+alias df="df | grep -v snap"  # commands mounting loopback filesystess?
 # utilities/statistics
 alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 
