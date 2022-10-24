@@ -53,6 +53,8 @@ alias listening='sudo lsof -i | grep LISTEN'
 alias ips='ifconfig | grep inet'
 alias p8='	ping -c 3 8.8.8.8' # make sure routing works
 alias pp='	ping -c 3 port111.com' # make sure dns and routing work
+# Disk related
+alias df="df | grep -v snap"  # commands mounting loopback filesystess?
 # utilities/statistics
 alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 
@@ -60,6 +62,8 @@ alias count='sort | uniq -c | sort -nr' # count unique things on stdin
 
 # json pretty prett print
 alias jpp="python -m json.tool"
+
+alias h=head
 
 #
 # Shell-related functions
@@ -96,8 +100,65 @@ function dirp () {
     done
     dirl
 }
-alias cd=pushd
 
+
+source $HOME/lib/bash/bashutils.sh  # error,warning,...
+
+indirs ()
+# return "true" if there is a directory in the stack that contains "$1"
+(
+    
+    CONTAINS="${1:-NONE}"
+
+    if [ "$CONTAINS" == "NONE" ]; then
+        warn "no directory name given for indirs"
+        return $FALSE
+    fi
+    
+    for d in `dirs`;
+    do
+        if [[ "$d" == *"${CONTAINS}"* ]]; then
+            return $TRUE
+        fi
+    done
+
+    info ${CONTAINS} not found in dirs
+    return $FALSE
+)
+
+p2 ()
+# pop to (p2) a directory in the directory stack that contains P2THIS
+{
+    
+    P2THIS="${1:-NONE}"
+
+    if [ "$P2THIS" == "NONE" ]; then
+        warn "no directory name given for p2"
+        return $FALSE
+    fi
+
+    if indirs $P2THIS; then
+
+        # pop until $PWD ends with $P2THIS
+        while true;
+        do
+            if [[ "$PWD" == *"${P2THIS}"* ]]; then
+                dirs
+                return $TRUE
+            else
+                popd 1> /dev/null || return $FALSE
+            fi
+        done
+
+    else
+        echo $INDIRS not found in `dirs`
+    fi
+}
+
+
+
+
+alias cd=pushd
 
 
 # Preserve history across sesssions
@@ -318,6 +379,7 @@ else
     export OPEN='echo OPEN not defined';
 fi
 
+export BROWSER=firefox
 
 
 # new file tail file
