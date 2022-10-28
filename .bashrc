@@ -107,14 +107,14 @@ source $HOME/lib/bash/bashutils.sh  # error,warning,...
 indirs ()
 # return "true" if there is a directory in the stack that contains "$1"
 (
-    
+
     CONTAINS="${1:-NONE}"
 
     if [ "$CONTAINS" == "NONE" ]; then
         warn "no directory name given for indirs"
         return $FALSE
     fi
-    
+
     for d in `dirs`;
     do
         if [[ "$d" == *"${CONTAINS}"* ]]; then
@@ -129,7 +129,7 @@ indirs ()
 p2 ()
 # pop to (p2) a directory in the directory stack that contains P2THIS
 {
-    
+
     P2THIS="${1:-NONE}"
 
     if [ "$P2THIS" == "NONE" ]; then
@@ -379,8 +379,7 @@ else
     export OPEN='echo OPEN not defined';
 fi
 
-export BROWSER=firefox
-
+export BROWSER=brave
 
 # new file tail file
 function nftf { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs tail -f  ; }
