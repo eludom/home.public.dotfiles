@@ -11,5 +11,5 @@ function gorg (
     AGE=${2:-7};
     debug WHAT $WHAT;
     debug AGE $AGE;
-    find . -name \*.org -mtime -${AGE} -exec grep -i --color -H -e  "${WHAT}" \{\} \;
+    find . -name \*.org -mtime -${AGE} -exec grep -i --color=always -H -e  "${WHAT}" \{\} \;
 )
