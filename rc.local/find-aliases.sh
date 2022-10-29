@@ -1,10 +1,10 @@
 source ~/lib/bash/bashutils.sh
 
-function lo {
+function lorg {
     # locate org files
     WHAT=${1:-.org};
     debug WHAT $WHAT;
-    locate "$WHAT" | grep \.org | grep -v backup
+    locate "$WHAT" | grep -e \.org\$ | grep -v backup
 }
 
 function gorg (
