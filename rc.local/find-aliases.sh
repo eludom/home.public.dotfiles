@@ -43,6 +43,7 @@ function gorg (
     #   DEBUG  - set to "1" for debugging
     #
     WHAT=${1:-DONE};
+    WHERE=${WHERE:-$HOME};
 
     if [[ $WHAT == "-h" ]]; then
         info "Usage: [FLAGS=-i] [EXT=.org] [WHERE=$HOME] gorg [WHAT [AGE]]"
@@ -51,6 +52,6 @@ function gorg (
 
     AGE=${2:-7};
     [[ -v DEBUG ]] && set -x
-    find "${WHERE:-.}" -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \;
+    find "${WHERE}" -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \; |& grep -v "No such file"
     [[ -v DEBUG ]] && set +x
 )
