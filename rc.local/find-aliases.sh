@@ -52,6 +52,6 @@ function gorg (
 
     AGE=${2:-7};
     [[ -v DEBUG ]] && set -x
-    find "${WHERE}" -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \; |& grep -v "No such file"
+    find "${WHERE}" -xdev -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \; |& grep -v "No such file"
     [[ -v DEBUG ]] && set +x
 )
