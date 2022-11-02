@@ -1,30 +1,40 @@
-source ~/lib/bash/bashutils.sh || \
+# Define some logging aliases
+source ~/lib/bash/bashutils.sh || `: # Use my library if available`\
+    `: fall back to echo`
     alias info=echo && \
     alias warn=echo && \
     alias error=echo
 
 function lorg (
-    # Locate .org (or .${EXT}) files
+    # Locate .org files
     #
-    # Usage:
-    #   [FLAGS=-i] [EXT=.org] org [-h] [WHAT]
+    # This function was written primarily to find .org files in my home directory.
     #
-    # Enviornment Variables:
-    #   WHAT   - regexp to serach for
-    #   EXT    - Search files of this extention.  Default ".org"
-    #   FLAGS  - used for locate flags.  Set to "FLAGS=-i" for case-insensitive.
-    #   DEBUG  - set to "1" for debugging
-    #
-    WHAT=${1:-$HOME};
-    FLAGS=${FLAGS:-'-r'}
+    # It used locate(1) to search fro WHAT
+    # It can be used to find files of other types (EXT=) anywhere (WHERE=).
+    # Certian files/patters (files with spaces) can be ignored with EXCLUDE=
+    # Setting DEBUG=1 will print the commands executed (set -x)
 
-    if [[ $WHAT == "-h" ]]; then
-        info "Usage: [FLAGS=] [EXT=.org]  lorg [WHAT]"
+    if [[ ${1} == "-h" ]]; then
+        info 'Locate .org files'
+        info 'Usage: [WHERE=$HOME] [EXCLUDE=regexps] [FLAGS=] [EXT=.org]  lorg [WHAT]'
         exit 1
     fi
 
+    # By default, WHAT is everything
+    WHAT=${1:-'*'};
+    # Only include files with this extention
+    EXT=${EXT:-org}
+    # Only include things here (change to WHERE=/ for whole system)
+    WHERE=${WHERE:-$HOME}
+    # grep -E pattern of thigs to exclude (junk files, backups, files with spaces..)
+    EXCLUDE='backup|[[:space:]]'
+
     [[ -v DEBUG ]] && set -x
-    \locate "${FLAGS}" "${WHAT}" | grep -e \."${EXT:-org}"\$ | grep -v backup
+    \locate -i "${WHAT}" | `: # locate files with WHAT in them` \
+     grep -E \\."${EXT}"\$ | `: # Only include things ending in .${EXT} `\
+     grep -E "${WHERE}" | `: # Only include things in these dirs ($HOME,"/"...)`\
+     grep -E -v "$EXCLUDE" `: # exclude patterns form EXCLUDE (backups, spaces...)`
     [[ -v DEBUG ]] && set +x
 )
 
