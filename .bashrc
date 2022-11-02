@@ -339,35 +339,52 @@ BIN_LS=/bin/ls
 alias ls='	ls '$color' -a'
 
 
+#
+# ls aliases with "long", for humans
+#
 # Long List Reverse Tail
-function llrt() { ls -lrt $color ${*:-}; }
-
+function llrt() { ls -Alrt $color ${*:-}; }
 # Long List Time
-function llt() { ls -lt $color ${*:-}; }
-
+function llt() { ls -Alt $color ${*:-}; }
 # Long List Time, More
-function lltm() { ls -lt $color ${*:-} | more; }
-
+function lltm() { ls -Alt $color ${*:-} | more; }
 # Long List Time, Less
-function lltl() { ls -alt $color ${*:-} | more; }
-
+function lltl() { ls -Alt $color ${*:-} | more; }
 # Long List Time, Head
-function llth() { ls -lt $color ${*:-} | head; }
-
+function llth() { ls -Alt $color ${*:-} | head; }
 # Long List Time, Tail
-function lltt() { ls -alt $color ${*:-} | tail; }
-
-
+function lltt() { ls -Alt $color ${*:-} | tail; }
 # List Sort Size
-function lss() { ls -a1s $color ${*:-} | sort -n; }
 
+#
+# ls aliases for parsing/
+#
+# Long List Reverse Tail
+function lrt() { ls -1Art --color=never ${*:-}; }
+# Long List Time
+function lt() { ls -1At --color=never ${*:-}; }
+# Long List Time, More
+function ltm() { ls -1At --color=never ${*:-} | more; }
+# Long List Time, Less
+function ltl() { ls -1At --color=never ${*:-} | more; }
+# Long List Time, Head
+function lth() { ls -1At --color=never ${*:-} | head; }
+# Long List Time, Tail
+function ltt() { ls -1At --color=never ${*:-} | tail; }
+# List Sort Size
+
+#
+# ls functions sorting by size
+#
+function lss() { ls -A1s $color ${*:-} | sort -n; }
 # List Sort Size Reverse
-function lssr() { ls -a1s $color ${*:-} | sort -nr; }
+function lssr() { ls -A1s $color ${*:-} | sort -nr; }
+
 
 function nf ()
 {
     # list the newest file in the current directory
-    NF=`find ${1:-.} -maxdepth 1 -type f -print0 | xargs -0 ls -1t  |  head -1;`;
+    NF=`ls -1At --color=never ${*:-} | head -1`;
     echo ${NF:-/dev/null} | sed "s/ /\\\ /g"
 }
 
