@@ -56,12 +56,18 @@ function gorg (
     WHERE=${WHERE:-$HOME};
 
     if [[ $WHAT == "-h" ]]; then
-        info "Usage: [FLAGS=-i] [EXT=.org] [WHERE=$HOME] gorg [WHAT [AGE]]"
+        info "Usage: [FLAGS=--color=always] [EXT=.org] [WHERE=$HOME] gorg [WHAT [AGE]]"
         exit 1
+    fi
+
+    COLOR="--color=always"
+
+    if [[ "$FLAGS" != "" ]]; then
+       unset COLOR
     fi
 
     AGE=${2:-7};
     [[ -v DEBUG ]] && set -x
-    find "${WHERE}" -xdev -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \; |& grep -v "No such file"
+    find "${WHERE}" -xdev -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep ${COLOR:-} ${FLAGS:-} -H -e    "${WHAT}" \{\} \; |& grep -v "No such file"
     [[ -v DEBUG ]] && set +x
 )
