@@ -52,16 +52,25 @@ function gorg (
     #   FLAGS  - used for grep flags.  Set to "FLAGS=-i" for case-insensitive, "FLAGS=-l"  for names only
     #   DEBUG  - set to "1" for debugging
     #
-    WHAT=${1:-DONE};
+    # Example
+    #
+    WHAT=${1:-"DONE"};
+    AGE=${2:-7};
     WHERE=${WHERE:-$HOME};
+    EXT=${EXT:-"org"}
 
     if [[ $WHAT == "-h" ]]; then
-        info "Usage: [FLAGS=-i] [EXT=.org] [WHERE=$HOME] gorg [WHAT [AGE]]"
+        info "Usage: [DEBUG=1] [FLAGS=] [EXT=.org] [WHERE=$HOME] gorg [WHAT [AGE]]"
         exit 1
     fi
 
-    AGE=${2:-7};
+    COLOR="--color=always"
+
+    if [[ "$FLAGS" != "" ]]; then
+       unset COLOR
+    fi
+
     [[ -v DEBUG ]] && set -x
-    find "${WHERE}" -xdev -type f -name \*."${EXT:-org}" -mtime -"${AGE}" -exec grep "${FLAGS:-}" --color=always -H -e  "${WHAT}" \{\} \; |& grep -v "No such file"
+    find "${WHERE}" -xdev -type f -name \*."${EXT}" -mtime -"${AGE}" -exec grep ${COLOR:-} ${FLAGS:-} -H -e    "${WHAT}" \{\} \; |& grep -v "No such file"
     [[ -v DEBUG ]] && set +x
 )
