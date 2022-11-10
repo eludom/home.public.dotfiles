@@ -239,8 +239,8 @@ fi
 # Copy to clipbloard/paste buffer without using the mouse
 #
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  alias 2clip='xclip -selection c'
-  alias 3clip='printf %s "$(cat /dev/stdin)" | xclip -selection c'  # no final \n
+  alias 2clip='xclip -rmlastnl -selection c'
+  #alias 3clip='printf %s "$(cat /dev/stdin)" | xclip -selection c'  # no final \n
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   alias 2clip='pbcopy'
 fi
