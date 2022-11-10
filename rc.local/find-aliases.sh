@@ -1,3 +1,56 @@
+# Aliases and functions to find files that have chagened
+#
+# This is an evolvoing collection of aliases and fucntions
+# to find files that have changed from the command line.
+#
+# There may be some overlap.
+
+
+
+function latest (
+    # Find lastest modified files and grep them.
+    #
+    # define parameters that control find(1)
+
+    WHAT=${1:-.}
+    AGE=${AGE:-7}
+    WHERE=${WHERE:-.}
+    # define filenames/paths to be ignored
+    #define junk files.  Your junk milage may vary.
+    junk=\.git/\\\|backup\\\|auto-save-list\\\|.config/\\\|.snap/\\\|.cache/\\\|.local/
+    # define errors to be ignored
+
+    # define parameters that control grep of file content
+    GREP=${GREP:-}
+    FLAGS=${FLAGS:-}
+
+    if [[ ${1} == "-h" ]]; then
+        WHAT="."
+        info 'Locate latst files'
+        info "Usage: [WHERE=${WHERE}] [AGE=${AGE}]  latest [WHAT=${WHAT}]"
+        exit 1
+    fi
+
+
+    [[ -v DEBUG ]] && set -x
+    if [ "${GREP}" == "" ]; then
+        # basic find functionality
+
+        find -L ${WHERE} -xdev -type f -mtime -${AGE} |& grep -v $junk | grep ${WHAT}
+    else
+        # grep contents of files found
+        error locate does not yet implement grep for content
+        # Not tested
+        #find -L ${WHERE} -xdev -type f -mtime -${AGE} --exec grep $GREP \{\} \;|& grep -v $junk | grep ${WHAT}
+        #
+        # TODO the file selectors "junk" should probably be part of the find logic
+        #      at least when we're grepping content
+        #      'case the way it's define above,
+        #      we will actually grep all the junk files
+    fi
+    [[ -v DEBUG ]] && set +x
+)
+
 # Define some logging aliases
 source ~/lib/bash/bashutils.sh || `: # Use my library if available`\
     `: fall back to echo`
@@ -17,7 +70,7 @@ function lorg (
 
     if [[ ${1} == "-h" ]]; then
         info 'Locate .org files'
-        info 'Usage: [WHERE=$HOME] [EXCLUDE=regexps] [FLAGS=] [EXT=.org]  lorg [WHAT]'
+
         exit 1
     fi
 
