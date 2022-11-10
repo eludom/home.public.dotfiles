@@ -320,6 +320,7 @@ if [ -z "$SSH_CONNECTION" ]; then
     export EDITOR="$EMACSCLIENT -c"
     export ALTERNATE_EDITOR=""
 else
+    alias ec="emacsclient -c"
     export EDITOR=$(type -P emacs || type -P ed)
 fi
 export VISUAL=$EDITOR
