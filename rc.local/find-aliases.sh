@@ -21,7 +21,6 @@ function latest (
     prune_linux='foo/|git/|backups/|auto-save-list|config/|snap/|cache/|local/|mozilla/|target/|.rustup/|.cargo/'
     prune_just_me='blog/docs'
     prune=".*(${prune_just_me}|${prune_linux}).*"
-    #prune='.*(foo|r|git).*'
     # define errors to be ignored
 
     # define parameters that control grep of file content
@@ -44,12 +43,14 @@ function latest (
 
         # -xdev \
 
+        debug "prune is ${prune}"
+
         find -L ${WHERE} \
              `: global options` \
              `: prune 'junk' files and dirs` \
              -regextype posix-extended \
              -xdev \
-             -regex ${prune} -prune -o \
+             -regex "${prune}" -prune -o \
              `: only look at regular files ` \
              -type f \
              `: restrict to mtime AGE days ago` \
