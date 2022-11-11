@@ -17,7 +17,11 @@ function latest (
     WHERE=${WHERE:-.}
     # define filenames/paths to be ignored
     #define junk files.  Your junk milage may vary.
-    junk=\.git/\\\|backup\\\|auto-save-list\\\|.config/\\\|.snap/\\\|.cache/\\\|.local/
+
+    prune_linux='foo/|git/|backups/|auto-save-list|config/|snap/|cache/|local/|mozilla/|target/|.rustup/|.cargo/'
+    prune_just_me='blog/docs'
+    prune=".*(${prune_just_me}|${prune_linux}).*"
+    #prune='.*(foo|r|git).*'
     # define errors to be ignored
 
     # define parameters that control grep of file content
@@ -36,17 +40,37 @@ function latest (
     if [ "${GREP}" == "" ]; then
         # basic find functionality
 
-        find -L ${WHERE} -xdev -type f -mtime -${AGE} |& grep -v $junk | grep ${WHAT}
+#        find . -regextype posix-extended -regex '.*(foo|r).*' -prune -o -print
+
+        # -xdev \
+
+        find -L ${WHERE} \
+             `: global options` \
+             `: prune 'junk' files and dirs` \
+             -regextype posix-extended \
+             -xdev \
+             -regex ${prune} -prune -o \
+             `: only look at regular files ` \
+             -type f \
+             `: restrict to mtime AGE days ago` \
+             -mtime -${AGE}\
+             `: restrict to files that match WHAT in full path` \
+             -regex ".*${WHAT}.*" \
+             -print #\
+            # TODO Add grep options
+            #   - Grep sring on command line
+            #     + only do --exec grep if present
+            #   - option for filenames only on grep -H
+            #   - optoon for case insensitive -i
+            #   - option for invert -v
+            # so probably some syntax like
+            #
+            # latest [locate options] WHAT [grep [grep optons] grep-regex]
+
+        #| grep ${WHAT}
     else
         # grep contents of files found
         error locate does not yet implement grep for content
-        # Not tested
-        #find -L ${WHERE} -xdev -type f -mtime -${AGE} --exec grep $GREP \{\} \;|& grep -v $junk | grep ${WHAT}
-        #
-        # TODO the file selectors "junk" should probably be part of the find logic
-        #      at least when we're grepping content
-        #      'case the way it's define above,
-        #      we will actually grep all the junk files
     fi
     [[ -v DEBUG ]] && set +x
 )
