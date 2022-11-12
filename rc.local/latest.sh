@@ -44,7 +44,7 @@ function latest (
     function usage ()  {
         message=${1:-""}
         cat <<EOF 1>&2
-Usage: latest [options] [WHAT]
+Usage: latest [options] [WHERE] [[WHAT] REGEX]
 
        find the latest files and what's in them.
 
@@ -56,7 +56,9 @@ Options
   -w|--where=DIR       Where to search for files.  Default: $WHERE
 
 Arguments
+  WHERE         A path (incuding "/").  Overrides -w.
   WHAT		Filenames to search for, in full path.  Default: $WHAT
+  REGEX         Regex to grep.  Overrrides -g.
 
 Examples:
   # find latest .org files in current directorry
@@ -73,7 +75,7 @@ EOF
     }
 
     # parse optons
-    while [ $# > 0 ]; do
+    while [[ $# > 0 ]]; do
       case ${1} in
         -a|--age)	shift; AGE="$1"; [[ $# > 0 ]] && shift || die '--age requires an argument';;
         -d|--debug)	DEBUG=1 && shift;;
@@ -88,10 +90,35 @@ EOF
     # parse args
 
 
-    if [[ $# = 1 ]]; then
-        WHAT="$1"
-    elif [[ $# > 1 ]]; then
-        die "too many arguments given ($#).  At most one allowed"
+    found_what=false
+    found_regex=false
+
+    while [[ $# > 0 ]]; do
+        if [[ "$1" = */* ]]; then
+            WHERE=$1;
+            shift;
+        elif [[ $found_what == true ]]; then
+            REGEX="$1";
+            found_regex=true;
+            shift;
+        else
+            found_what=true;
+            WHAT="$1";
+            shift;
+        fi
+
+        # if [[ $# == 0 ]]; then
+        #     break
+        # fi
+    done
+
+    # if [[ $# = 1 ]]; then
+    #     WHAT="$1"
+    # elif [[ $# = 2 ]]; then
+    #     WHAT="$1"
+    #     REGEX="$2"
+    if [[ $# > 0 ]]; then
+        die "too many arguments given.  At most 3 allowed.  Unknow: ${ARGV[*]}"
     fi
 
    [[ -v DEBUG ]] && set -x
@@ -116,17 +143,6 @@ EOF
         `: restrict to files that match WHAT in full path` \
         -regex ".*${WHAT}.*" \
         ${GREPFLAGS[*]}
-        #-print #\
-   #     # TODO Add grep options
-   # #   - Grep sring on command line
-   #          #     + only do --exec grep if present
-   #          #   - option for filenames only on grep -H
-   #          #   - optoon for case insensitive -i
-   #          #   - option for invert -v
-   #          # so probably some syntax like
-   #          #
-   #          # latest [locate options] WHAT [grep [grep optons] grep-regex]
 
-   #      #| grep ${WHAT}
-   #  # [[ -v DEBUG ]] && set +x
+    [[ -v DEBUG ]] && set +x
 )
