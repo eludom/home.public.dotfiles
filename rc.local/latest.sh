@@ -109,7 +109,8 @@ EOF
             WHERE=$1;
             shift;
         elif [[ "$1" =~ ^[0-9]+$ ]]; then
-            AGE="$"
+            AGE="$1"
+            shift
         elif [[ $found_what == true ]]; then
             REGEX="$1";
             found_regex=true;
