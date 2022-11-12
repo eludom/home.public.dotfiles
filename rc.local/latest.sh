@@ -22,7 +22,7 @@ function latest (
     #
     # Defaults for parameters that control find(1)
     #
-    WHAT=${1:-org}
+    WHAT=${WHAT:-org}
     AGE=${AGE:-7}
     WHERE=${WHERE:-.}
     # define filenames/paths to be ignored
@@ -40,12 +40,8 @@ function latest (
     #
     # TODO grep out?
 
-    #
-    # Usage.  Show defaults.
-    #
 
-        function usage ()  {
-
+    function usage ()  {
         message=${1:-""}
         cat <<EOF 1>&2
 Usage: latest [options] [WHAT]
@@ -74,84 +70,63 @@ Examples:
 
 EOF
 
-        if [[ "${message}" != "" ]]; then
-           echo 2>&1
-           error "${message}"
-        fi
     }
 
-    # parse optons first
+    # parse optons
     while [ $# > 0 ]; do
       case ${1} in
-        -a|--age)	AGE="$1" && shift;;
+        -a|--age)	shift; AGE="$1"; [[ $# > 0 ]] && shift || die '--age requires an argument';;
         -d|--debug)	DEBUG=1 && shift;;
-        -g|--grep)	REGEX="${1}" && shift;;
+        -g|--grep)	shift; REGEX="${1}" && shift || die '--grep requires an argument';;
         -h|--help)	usage && return 1;;
-        -w|--where)	WHERE="$1" && shift;;
+        -w|--where)	shift; WHERE="$1" && shift || die '--where requires an argument';;
         -*)              error "Unknown flag: $1" && return 1;;
         *)             break;;
        esac
     done
 
-    if [[ -v DEBUG ]]; then
-        cat <<EOF
-Variables:
-  AGE: $AGE
-  WHERE: $WHERE
-  WHAT: $WHAT
-  REGEX: ${REGEX:-None}
-EOF
+    # parse args
 
+
+    if [[ $# = 1 ]]; then
+        WHAT="$1"
+    elif [[ $# > 1 ]]; then
+        die "too many arguments given ($#).  At most one allowed"
     fi
-    return
 
+   [[ -v DEBUG ]] && set -x
 
-    return
+   GREPFLAGS=()
+   if [[ -v REGEX ]]; then
+       GREPFLAGS=("-exec" "grep" "--color=always" "-H ""-E"  "$REGEX" '{}' ';')
+   else
+       GREPFLAGS=( '-print' )
+   fi
 
-]    [[ -v DEBUG ]] && set -x
-    if [ "${GREP}" == "" ]; then
-        # basic find functionality
+   find -L ${WHERE} \
+        `: global options` \
+        `: prune 'junk' files and dirs` \
+        -regextype posix-extended \
+        -xdev \
+        -regex "${prune}" -prune -o \
+        `: only look at regular files ` \
+        -type f \
+        `: restrict to mtime AGE days ago` \
+        -mtime -${AGE}\
+        `: restrict to files that match WHAT in full path` \
+        -regex ".*${WHAT}.*" \
+        ${GREPFLAGS[*]}
+        #-print #\
+   #     # TODO Add grep options
+   # #   - Grep sring on command line
+   #          #     + only do --exec grep if present
+   #          #   - option for filenames only on grep -H
+   #          #   - optoon for case insensitive -i
+   #          #   - option for invert -v
+   #          # so probably some syntax like
+   #          #
+   #          # latest [locate options] WHAT [grep [grep optons] grep-regex]
 
-#        find . -regextype posix-extended -regex '.*(foo|r).*' -prune -o -print
-
-        # -xdev \
-
-        debug "prune is ${prune}"
-
-        find -L ${WHERE} \
-             `: global options` \
-             `: prune 'junk' files and dirs` \
-             -regextype posix-extended \
-             -xdev \
-             -regex "${prune}" -prune -o \
-             `: only look at regular files ` \
-             -type f \
-             `: restrict to mtime AGE days ago` \
-             -mtime -${AGE}\
-             `: restrict to files that match WHAT in full path` \
-             -regex ".*${WHAT}.*" \
-             -print #\
-            # TODO Add grep options
-            #   - Grep sring on command line
-            #     + only do --exec grep if present
-            #   - option for filenames only on grep -H
-            #   - optoon for case insensitive -i
-            #   - option for invert -v
-            # so probably some syntax like
-            #
-            # latest [locate options] WHAT [grep [grep optons] grep-regex]
-
-        #| grep ${WHAT}
-    else
-        # grep contents of files found
-        error locate does not yet implement grep for content
-    fi
-    [[ -v DEBUG ]] && set +x
+   #      #| grep ${WHAT}
+   #  # [[ -v DEBUG ]] && set +x
 )
-
-# Define some logging aliases
-source ~/lib/bash/bashutils.sh || `: # Use my library if available`\
-    `: fall back to echo`
-    alias info=echo && \
-    alias warn=echo && \
-    alias error=echo
