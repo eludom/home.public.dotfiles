@@ -44,7 +44,7 @@ function latest (
     function usage ()  {
         message=${1:-""}
         cat <<EOF 1>&2
-Usage: latest [options] [WHERE] [[WHAT] REGEX]
+Usage: latest [options] [WHERE] [AGE] [[WHAT] REGEX]]
 
        find the latest files and what's in them.
 
@@ -56,19 +56,30 @@ Options
   -w|--where=DIR       Where to search for files.  Default: $WHERE
 
 Arguments
-  WHERE         A path (incuding "/").  Overrides -w.
-  WHAT		Filenames to search for, in full path.  Default: $WHAT
-  REGEX         Regex to grep.  Overrrides -g.
+  First one or two positons.
+    WHERE         A path (incuding "/").  Overrides -w.
+    AGE           Max age.  Digits.  Overrides -a.
+
+  First non-age (digits), non-path (contains "/") argument
+    WHAT		Filenames to search for, in full path.  Default: $WHAT
+
+  Second non-age (digits), non-path (contains "/") argument
+    REGEX         Regex to grep.  Overrrides -g.
 
 Examples:
   # find latest .org files in current directorry
-  lastest
+    lastest
 
   # find .sql files modified in the last 30 days in the home directory
-  latest -a 30 -w $HOME sql
+    latest -a 30 -w $HOME sql
+      or
+    latest 30 $HOME sql
 
   # find python files with "pandas"
-  latest -g pandas .py
+    latest -g pandas .py
+      or
+    latest .py pandas
+
 
 EOF
 
@@ -97,6 +108,8 @@ EOF
         if [[ "$1" = */* ]]; then
             WHERE=$1;
             shift;
+        elif [[ "$1" =~ ^[0-9]+$ ]]; then
+            AGE="$"
         elif [[ $found_what == true ]]; then
             REGEX="$1";
             found_regex=true;
