@@ -27,8 +27,14 @@ function set_xtitle {
     # Usage:
     #
     #   set_xtitle [name]
+
     WINDOW_NAME="${1:-`basename $PWD`}"
-    PROMPT_COMMAND="echo -ne \"\033]0;${WINDOW_NAME} $USER@$HOSTNAME:$PWD\007\"";
+
+    if [[ -v INSIDE_EMACS ]]; then
+        PROMPT_COMMAND="echo -ne ${WINDOW_NAME} $USER@$HOSTNAME:$PWD";
+    else
+        PROMPT_COMMAND="echo -ne \"\033]0;${WINDOW_NAME} $USER@$HOSTNAME:$PWD\007\"";
+    fi
 }
 export PS1="\# [\t] \u@\h \W/ $ "
 
@@ -172,11 +178,14 @@ shopt -s histappend                      # append to history, don't overwrite it
 
 # Save and reload the history after each command finishes
 
-if [[ -z "${DISPLAY}" ]]; then
-    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""
-else
+if [[ -v INSIDE_EMACS ]]; then
+    # no escape characters
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \`whoami\`@\`hostname -s\`:"
+elif [[ -v DISPLAY ]]; then
     # in X-land, set window title to user@host:pwd
     export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;\`whoami\`@\`hostname -s\`:\`pwd\`\007\""
+else
+    export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""
 fi
 
 # modern GPG setup
@@ -314,14 +323,15 @@ alias emacs='setsid emacs'
 
 # from http://stuff-things.net/2014/12/16/working-with-emacsclient/
 
-if [ -z "$SSH_CONNECTION" ]; then
+if [[ -v SSH_CONNECTION ]]; then
+    alias ec="emacsclient -c"
+    export EDITOR=$(type -P emacs || type -P ed)
+
+else
     export EMACSCLIENT=emacsclient
     alias ec="$EMACSCLIENT -c -n"
     export EDITOR="$EMACSCLIENT -c"
     export ALTERNATE_EDITOR=""
-else
-    alias ec="emacsclient -c"
-    export EDITOR=$(type -P emacs || type -P ed)
 fi
 export VISUAL=$EDITOR
 
