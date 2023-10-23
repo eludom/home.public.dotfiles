@@ -188,6 +188,15 @@ else
     export PROMPT_COMMAND="history -a; history -c; history -r;echo -ne \"\033]0;$USER@$HOSTNAME:$PWD\007\""
 fi
 
+
+# for working in emacs shell
+if [[ "$TERM" == "dumb" ]]; then
+    # No terminal escape characters for color, etc.
+    # only include final element of pwd
+    export PROMPT_COMMAND='echo -ne ${WINDOW_NAME} $USER@$HOSTNAME:`pwd | sed s#\.\*/##g`'
+    export PS1=" \u@\$(prompt-hostname) \W $(git-branch-prompt) \$ "
+fi
+
 # modern GPG setup
 # https://stackoverflow.com/questions/17769831/how-to-make-gpg-prompt-for-passphrase-on-cli
 #
