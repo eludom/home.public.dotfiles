@@ -6,7 +6,7 @@
 #   set -u
 
 # Don't exit out of login shell on error
-set +e
+# set +e
 
 # Set to debug
 #   export DEBUG=1
@@ -294,7 +294,8 @@ alias pathcat="echo $PATH | sed 's/:/\n/g'"
 
 # Be sure we have a few specific paths if they exist
 
-pathlast $HOME/bin
+pathrm $HOME/bin
+pathfirst $HOME/bin
 pathfirst $HOME/.local/bin
 pathlast /usr/local/bin
 pathlast /opt/bin
