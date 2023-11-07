@@ -11,6 +11,8 @@
 # Set to debug
 #   export DEBUG=1
 
+export BASHRCRAN="``"
+
 #PROG=`basename "$0" | tr -d '\n'`  # normal setting
 PROG="bashrc" # setting for bashrc due to errors
 
@@ -402,13 +404,56 @@ function lss() { ls -A1s $color ${*:-} | sort -n; }
 function lssr() { ls -A1s $color ${*:-} | sort -nr; }
 
 
-function nf ()
-{
-    # list the newest file in the current directory
-    NF=`ls -1At --color=never ${*:-} | head -1`;
-    echo ${NF:-/dev/null} | sed "s/ /\\\ /g"
-}
+# Usage: nf [#] [DIRECTORY]
+# list the newest file in the current directory (or $1)
+nf() (
 
+  NUM=1
+  DIR="$PWD"
+
+  if [[ "$1" =~ ^[0-9]+$ ]]; then
+    NUM="$1"
+  fi
+
+  if [[ "$2" =~ ^[0-9]+$ ]]; then
+    NUM="$2"
+  fi
+
+  if [ -d "$1" ]; then
+    DIR="$1"
+  fi
+
+  if [ -d "$2" ]; then
+    DIR="$2"
+  fi
+
+  # TODO fix case where invoked as
+  #
+  #      nf GARBAGE
+  #
+  # should fail with no directory
+
+  if [[ "$NUM" == 0 ]]; then
+     NUM=1
+  fi
+
+  if [ -d "$DIR" ]; then
+    # Check if the argument is a valid directory
+    \cd "$DIR" || die "$DIR is not a directory"
+    # Use find to locate only files, not directories, and list them by modification time
+    latest_file=$(find . -maxdepth 1 -type f -exec stat -c "%Y %n" {} + | sort -n -r | head -n $NUM | awk '{print $2}')
+
+    if [ -n "$latest_file" ]; then
+      echo "$latest_file"
+    else
+      warn "No files found in the $DIR"
+    fi
+  else
+    info "Usage: $PROGNAME DIRECTORY"
+    warn "$DIR is not a directory"
+    return 1
+  fi
+)
 
 if [[  ! -z "`which xdg-open`" ]]; then
     alias open='xdg-open ';
