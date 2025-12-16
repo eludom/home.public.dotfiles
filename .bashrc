@@ -366,15 +366,15 @@ alias ls='	ls '$color' -a'
 # ls aliases with "long", for humans
 #
 # Long List Reverse Tail
-function llrt() { ls -Alrt $color ${*:-}; }
+function llrt() { ls -Alrt $color ${*:-} | tail; }
 # Long List Time
 function llt() { ls -Alt $color ${*:-}; }
 # Long List Time, More
 function lltm() { ls -Alt $color ${*:-} | more; }
 # Long List Time, Less
-function lltl() { ls -Alt $color ${*:-} | more; }
+function lltl() { ls -Alt $color ${*:-} | less; }
 # Long List Time, Head
-function llth() { ls -Alt $color ${*:-} | head; }
+function llth() { ls -Alth $color ${*:-} | head; }
 # Long List Time, Tail
 function lltt() { ls -Alt $color ${*:-} | tail; }
 # List Sort Size
@@ -411,6 +411,7 @@ else
 fi
 
 export BROWSER=brave
+alias brave='brave --force-device-scale-factor=2'
 
 # new file tail file
 function nftf { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs tail -f  ; }
@@ -438,7 +439,7 @@ function nflsl { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs
 ls -Atl  ; }
 
 #
-# Don't exit the shell casually
+# Dont exit the shell casually
 #
 export IGNOREEOF=42
 
