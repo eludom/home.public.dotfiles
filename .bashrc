@@ -328,24 +328,10 @@ done
 #
 # Emacs setup
 #
-# TODO: move to ~/rc.local
-#   + I (sadly) don't urn emacs everwhere
-#
-alias emacs='setsid emacs'
+alias emacs="emacsclient -n -c -a ''"
 
-# from http://stuff-things.net/2014/12/16/working-with-emacsclient/
-
-if [[ -v SSH_CONNECTION ]]; then
-    alias ec="emacsclient -c"
-    export EDITOR=$(type -P emacs || type -P ed)
-
-else
-    export EMACSCLIENT=emacsclient
-    alias ec="$EMACSCLIENT -c -n"
-    export EDITOR="$EMACSCLIENT -c"
-    export ALTERNATE_EDITOR=""
-fi
-export VISUAL=$EDITOR
+export VISUAL="emacsclient -c -a ''"
+export EDITOR="$VISUAL"
 
 #
 # Various ls functions
