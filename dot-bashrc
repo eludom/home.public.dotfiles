@@ -11,6 +11,8 @@
 # Set to debug
 #   export DEBUG=1
 
+export BASHRCRAN="``"
+
 #PROG=`basename "$0" | tr -d '\n'`  # normal setting
 PROG="bashrc" # setting for bashrc due to errors
 
