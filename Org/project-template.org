@@ -1,0 +1,44 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:nil arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:2
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: PROJECT
+#+date: <2026-10-10 12:44:07 Saturday>
+#+author: George Jones
+#+email: gmj@pobox.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 28.0.50 (Org mode 9.3.7)
+
+This is a project to...(overview/intro)...
+
+* PROJECT
+** PROJECT Info                                                         :cogita:Ooda:
+   - Observe :: Gather Raw Information.
+   - Think (Cogita) :: Thoughts, Brainstorming, etc.
+*** Info about the project
+*** Links
+     - project directory :: file://~/home/private/FOO
+       + change this
+       + create directory
+       + keep project files here.
+*** HOWTOs
+    - Links of HOWTO articles relevant to the project
+** PROJECT Background
+   - Add any background info here (old files, plans, projects..)
+** PROJECT Planning                                                     :cogita:oODa:
+   - Think :: Think about observations and info gathered
+   - Orient :: "Figure out which way is up"
+   - Decide :: Decide what your doing, which way to go.
+*** Goals
+*** Plans
+** PROJECT Action Items                                                    :fac:oodA:
+   - Act/DO (Fac) :: Actions to take on info and plans
+** PROJECT Meetings and Reports                                                 :dic:
+   - "After action reports"
+   - Tell people what happened.
+   - Have meetings, write reports, etc. (as needed)
+
+** PROJECT Backlog
