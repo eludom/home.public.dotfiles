@@ -229,19 +229,6 @@ else
     export HOSTNAME="unknown"
 fi
 
-# Set timezone if ~/bin/tz.sh exists
-
-# NEW, if neeeed?
-#
-# https://linuxize.com/post/how-to-set-or-change-timezone-in-linux/
-#
-# OLD:
-#
-# if [ -e ~/bin/tz.sh ]; then
-#     echo Setting timezone.
-#     source ~/bin/tz.sh # should be in ~/rc.local
-# fi
-
 # STILL NEEDED?
 #
 # Set local for numeric output
@@ -328,6 +315,10 @@ done
 #
 # Emacs setup
 #
+
+# ^S^Q pass to emacs
+stty -ixon
+
 alias emacs="emacsclient -n -c -a ''"
 
 export VISUAL="emacsclient -c -a ''"
@@ -423,6 +414,7 @@ function nfls { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs ls -A1t  ; }
 # new file ls -l
 function nflsl { NF=`nf ${1:-.}`; debug NF $NF;  echo "$NF" | xargs
 ls -Atl  ; }
+
 
 #
 # Dont exit the shell casually
